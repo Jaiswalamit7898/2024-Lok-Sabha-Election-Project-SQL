@@ -1,25 +1,20 @@
+# 2024-Lok-Sabha-Election-Project-SQL Data analysis
+## Overview
+The objective of the India Lok Sabha Election 2024 SQL project is to analyze electoral trends by evaluating voter turnout, party-wise seat distribution, and constituency-level performance. The project aims to uncover insights into voting patterns, track shifts in political allegiance, and provide data-driven predictions for future elections.
 
-SELECT * FROM constituencywise_details
+### Problems and Solutions
 
-SELECT * FROM constituencywise_results
-
-SELECT * FROM partywise_results
-
-SELECT * FROM states
-
-SELECT * FROM statewise_results
-
--- 1) How many total seats are there ?
-
+#### 1) How many total seats are there ?
+```sql
 SELECT
   DISTINCT COUNT
       (parliament_constituency)Total_seats 
 FROM 
        constituencywise_results
+```
+#### 2) What are the total number of seats available in each state ?
 
--- 2) What are the total number of seats available in each state ?
-
-
+```sql
 SELECT 
    s.state as State_name ,
    COUNT
@@ -32,9 +27,9 @@ JOIN
    states s ON sr.State_ID = s.State_ID
 GROUP BY 
    s.state
-
--- 3) Total Seats won by NDA Alliance 
-
+```
+#### 3) Total Seats won by NDA Alliance 
+```sql
 SELECT
   SUM(CASE  
      WHEN Party IN(
@@ -56,9 +51,9 @@ SELECT
      ELSE 0
 	END) as NDA_Total_Votes
   FROM partywise_results
-
- --4) Total seats won by NDA Allaince parties
-
+```
+#### 4) Total seats won by NDA Allaince parties
+```sql
 SELECT 
    Party as Party_Name, 
    Won as Seat_Won
@@ -81,10 +76,10 @@ WHERE
                 'Sikkim Krantikari Morcha - SKM'     
 )
 ORDER BY seat_won DESC
+```
 
-
--- 4) Total Seats won by I.N.D.I.A Alliance 
-
+#### 5) Total Seats won by I.N.D.I.A Alliance 
+```sql
 SELECT 
   SUM(CASE
         WHEN Party IN (
@@ -113,19 +108,18 @@ SELECT
 		   ELSE 0
 		  END) AS INDIA_Total_Seats_Won
       FROM partywise_results
-
-  --5) Total seats won by INDIA Allaince  and NDA allaince parties .
- 
-  
+```
+#### 6) Total seats won by INDIA Allaince  and NDA allaince parties .
+ ```sql  
 SELECT 
   party_allaince ,SUM(WON) as Seats
 FROM 
   partywise_results
 GROUP BY  
   party_allaince 
-
-  --  OR
-
+```
+#### OR
+```sql
 SELECT 
    Party as Party_Name, 
    Won as Seat_Won
@@ -156,9 +150,9 @@ WHERE
                 'Viduthalai Chiruthaigal Katchi - VCK'
 )
 ORDER BY seat_won DESC 
- 
--- 6) Add a new colunm as a party Allaince to know weather the comes under NDA, INDIA Or Others.
- 
+ ```
+#### 7) Add a new colunm as a party Allaince to know weather the comes under NDA, INDIA Or Others.
+ ```sql
 ALTER Table partywise_results
 ADD party_allaince VARCHAR(50)
 
@@ -220,10 +214,10 @@ SELECT party_allaince ,SUM(WON) as Seats
 FROM partywise_results
 GROUP BY  party_allaince 
 
-
--- 7) Fetch out the winning candidate name ,their party name, total votes and the margin of victory
---    for a specific state ans constituency
-
+```
+#### 8) Fetch out the winning candidate name ,their party name, total votes and the margin of victory for a specific state ans constituency
+   
+```sql
 SELECT 
     cr.winning_candidate,
     pr.party,
@@ -242,10 +236,10 @@ JOIN
     states s ON sr.State_ID = s.State_ID
 WHERE 
     Constituency_Name   = 'KANPUR'
+```
 
-
--- 8)  What is the distribution of EVM votes VS postal votes for canditates in a specific constituency 
-
+#### 9)  What is the distribution of EVM votes VS postal votes for canditates in a specific constituency 
+```sql
 SELECT cd.candidate,
        cd.Evm_votes,
        cd.postal_votes,
@@ -256,9 +250,9 @@ FROM
    INNER JOIN constituencywise_details cd ON cr.Constituency_ID = cd.Constituency_ID
 WHERE 
   constituency_name = 'BIJNOR'
-
--- 9) Which party won the most seats in a state , and how many seats did each party win ?
-
+```
+#### 10) Which party won the most seats in a state , and how many seats did each party win ?
+```sql
 SELECT 
      p.party, 
 	 COUNT(cr.Constituency_Name)seats_won 
@@ -276,11 +270,11 @@ GROUP BY
      p.party
 ORDER BY 
      seats_won DESC
+```
 
-
---9) What is the total number of seats won by each party allaince (NDA, I.N.D.I.A. Others)
---   in each state for indian Election 2024
-
+#### 11) What is the total number of seats won by each party allaince (NDA, I.N.D.I.A. Others) in each state for indian Election 2024
+   
+```sql
 SELECT
    s.state ,
    SUM(CASE WHEN p.party_allaince = 'NDA' THEN 1 ELSE 0 END)AS NDA_Seats_Won,
@@ -296,11 +290,10 @@ JOIN
    states s ON sr.State_ID = s.State_ID
 GROUP BY
    s.State
+```
 
-
--- 10) Which candidate receive the higest no of EVM Votes in each constituency ? TOP 10 
---     mention their party allaince also. 
-
+#### 12) Which candidate receive the higest no of EVM Votes in each constituency ? TOP 10 mention their party allaince also.
+```sql
 SELECT TOP 10
     cr.constituency_name,
 	cd.constituency_id,
@@ -324,12 +317,9 @@ WHERE
 	   )
 ORDER BY 
     cd.EVM_Votes DESC
-
-
--- 11) For Maharashtra state what are the total number of seats, total no of candidates, total number of parties,
---       total votes, and the breakdown of EVM and postal votes
-
-
+```
+####  13) For Maharashtra state what are the total number of seats, total no of candidates, total number of parties, total votes, and the breakdown of EVM and postal votes
+```sql
 SELECT 
     COUNT(DISTINCT cr.Constituency_Name)Total_seats,
 	COUNT(DISTINCT cd.candidate)Total_candidates,
@@ -349,5 +339,4 @@ JOIN
 
 WHERE 
     s.State = 'Maharashtra'
-
---                                                  PROJECT END                                                   --
+```
